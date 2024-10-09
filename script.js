@@ -66,6 +66,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (repos) {
         renderRepos(repos);
     }
+    document.getElementById('page-count').innerHTML =  "Page number 1";
 });
 
 // Function to parse the Link header and get the last page URL
@@ -96,6 +97,8 @@ let nextBtn = document.getElementById('next-page');
 nextBtn.addEventListener('click', async () => {
     // Increment page first
     page++;
+    // Page number indicator
+    document.getElementById('page-count').innerHTML =  "Page number " + page;
 
     // Fetch and render the updated data
     const repos = await getData();
@@ -115,6 +118,7 @@ let prevBtn = document.getElementById('prev-page');
 // Function to go prev
 prevBtn.addEventListener('click', async () => {
     if (page === 1 && lastPageUrl) {
+        document.getElementById('page-count').innerHTML = "Last page";
         // Fetch and render the updated page of data
         const repos = await getData(lastPageUrl)
         if (repos) {
@@ -131,6 +135,8 @@ prevBtn.addEventListener('click', async () => {
     } else if (page > 1) {
         // Reduce page
         page--
+        // Page number indicator
+        document.getElementById('page-count').innerHTML = "Page number " + page;
         // Fetch and render the updated page of data
         const repos = await getData();
         if (repos) {
