@@ -5,11 +5,11 @@ let lastPageUrl = null;
 // Fetching function
 async function getData(url = null) {
     // Endpoint API
-    const apiUrl = url || "https://api.github.com/user/repos";
+    const apiUrl = url || `https://api.github.com/user/repos?per_page=${10}&page=${page}`;
 
     try {
         // Assign constant to the fetching of data with headers.
-        const response = await fetch(`${apiUrl}?per_page=${10}&page=${page}`, {
+        const response = await fetch (apiUrl, {
             headers: {
                 "Accept": "application/vnd.github+json",
                 "Authorization": "Bearer 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",
@@ -26,13 +26,12 @@ async function getData(url = null) {
         const json = await response.json();
         console.log(json);
 
-         // If it's the first call, extract the last page URL from the Link header
         // Access the Link header
         const linkHeader = response.headers.get('Link');
-        console.log(linkHeader);
-
-        if (page === 1 && linkHeader) {
+        // If lastpageurl it's null and if it's the first page and linksHeader it's retrieved get last page url
+        if (!lastPageUrl && page === 1 && linkHeader) {
             lastPageUrl = getLastPageUrl(linkHeader);
+            console.log(lastPageUrl);
         }
 
         // return the collection
@@ -41,7 +40,7 @@ async function getData(url = null) {
         console.error(error.message);
     }
 }
-// ReposRender basic
+// Basic rendering for repos
 function renderRepos(repos) {
     // Select DOM Element
     const repoList = document.getElementById("repo-list");
@@ -59,7 +58,7 @@ function renderRepos(repos) {
     });
 }
 
-// At startup first 10 rendered
+// Function to rendere the first 10 elements of collection at startup
 document.addEventListener("DOMContentLoaded", async () => {
     // save the return of getData (json collection) into var repos and wait to fetch data
     const repos = await getData();
@@ -71,26 +70,34 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 // Function to parse the Link header and get the last page URL
 function getLastPageUrl(linkHeader) {
+    // create an array of two links + rel
     const links = linkHeader.split(", ");
+    // console.log(links);
+    
+    // forof loop
     for (const link of links) {
+        // divide link and rel
         const [urlPart, relPart] = link.split("; ");
+        // console.log(urlPart, relPart);
+        // if includes rel=last so it's the last page link return link
         if (relPart.includes('rel="last"')) {
-            return urlPart.slice(1, -1); // Remove angle brackets and return the URL
+            // console.log(urlPart);
+            // slice the brackets
+            return urlPart.slice(1, -1);
         }
     }
     return null; // Return null if no last page is found
 }
 
 
-
-
 // NextButton on DOM
 let nextBtn = document.getElementById('next-page');
+// Function to go next
 nextBtn.addEventListener('click', async () => {
     // Increment page first
     page++;
 
-    // Fetch and render the new page of data
+    // Fetch and render the updated data
     const repos = await getData();
     if (repos) {
         renderRepos(repos);
@@ -104,16 +111,30 @@ nextBtn.addEventListener('click', async () => {
 
 // PrevButton on DOM
 let prevBtn = document.getElementById('prev-page');
-// PrevFunction
-prevBtn.addEventListener('click', async () => {
-    // Ensure page doesn’t go below 1
-    if (page > 1) {
-        page--; // Decrement page first
-    }
 
-    // Fetch and render the updated page of data
-    const repos = await getData();
-    if (repos) {
-        renderRepos(repos);
+// Function to go prev
+prevBtn.addEventListener('click', async () => {
+    if (page === 1 && lastPageUrl) {
+        // Fetch and render the updated page of data
+        const repos = await getData(lastPageUrl)
+        if (repos) {
+            renderRepos(repos);
+
+
+            console.log(new URL (lastPageUrl));
+            
+            // Update page number to the last page after fetching the last page
+            const lastPageNumber = new URL(lastPageUrl).searchParams.get("page");
+            page = lastPageNumber;
+        }
+
+    } else if (page > 1) {
+        // Reduce page
+        page--
+        // Fetch and render the updated page of data
+        const repos = await getData();
+        if (repos) {
+            renderRepos(repos);
+        }
     }
 });
