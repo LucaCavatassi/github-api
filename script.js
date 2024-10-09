@@ -1,17 +1,15 @@
 // Starting Page 
 let page = 1;
+let lastPageUrl = null;
 
 // Fetching function
-async function getData() {
+async function getData(url = null) {
     // Endpoint API
-    const url = "https://api.github.com/user/repos";
-    // PerPage Items
-    const perPage = 10;
-    
+    const apiUrl = url || "https://api.github.com/user/repos";
 
     try {
         // Assign constant to the fetching of data with headers.
-        const response = await fetch(`${url}?per_page=${perPage}&page=${page}`, {
+        const response = await fetch(`${apiUrl}?per_page=${10}&page=${page}`, {
             headers: {
                 "Accept": "application/vnd.github+json",
                 "Authorization": "Bearer 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",
@@ -27,6 +25,15 @@ async function getData() {
         // Else save response into json const as json collection and log it
         const json = await response.json();
         console.log(json);
+
+         // If it's the first call, extract the last page URL from the Link header
+        // Access the Link header
+        const linkHeader = response.headers.get('Link');
+        console.log(linkHeader);
+
+        if (page === 1 && linkHeader) {
+            lastPageUrl = getLastPageUrl(linkHeader);
+        }
 
         // return the collection
         return json
@@ -62,24 +69,51 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 });
 
-let nextBtn = document.getElementById('next-page');
-nextBtn.addEventListener('click', async () => {
-    // save the return of getData (json collection) into var repos and wait to fetch data
-    const repos = await getData();
-
-    // If repo in pagina minori di 10
-    if (repos.length < 10) {
-        page = 1
-        // if data it's fetched apply render-repos
-        if (repos) {
-            renderRepos(repos);
-        }
-    } else {
-        // set page up
-        page++;
-        // if data it's fetched apply render-repos
-        if (repos) {
-            renderRepos(repos);
+// Function to parse the Link header and get the last page URL
+function getLastPageUrl(linkHeader) {
+    const links = linkHeader.split(", ");
+    for (const link of links) {
+        const [urlPart, relPart] = link.split("; ");
+        if (relPart.includes('rel="last"')) {
+            return urlPart.slice(1, -1); // Remove angle brackets and return the URL
         }
     }
-})
+    return null; // Return null if no last page is found
+}
+
+
+
+
+// NextButton on DOM
+let nextBtn = document.getElementById('next-page');
+nextBtn.addEventListener('click', async () => {
+    // Increment page first
+    page++;
+
+    // Fetch and render the new page of data
+    const repos = await getData();
+    if (repos) {
+        renderRepos(repos);
+    }
+
+    // Reset to first page if less than perPage repos fetched (end of pages)
+    if (repos.length < 10) {
+        page = 1;
+    }
+});
+
+// PrevButton on DOM
+let prevBtn = document.getElementById('prev-page');
+// PrevFunction
+prevBtn.addEventListener('click', async () => {
+    // Ensure page doesn’t go below 1
+    if (page > 1) {
+        page--; // Decrement page first
+    }
+
+    // Fetch and render the updated page of data
+    const repos = await getData();
+    if (repos) {
+        renderRepos(repos);
+    }
+});
