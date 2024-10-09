@@ -36,6 +36,7 @@ async function getData(url = null) {
         const linkHeader = response.headers.get('Link');
         if (!lastPageUrl && page === 1 && linkHeader) {
             lastPageUrl = getLastPageUrl(linkHeader);
+            console.log(lastPageUrl);
         }
         return json;
     } catch (error) {
@@ -47,9 +48,16 @@ async function getData(url = null) {
 
 // Last url retriever
 function getLastPageUrl(linkHeader) {
+    // create an array of two links + rel
     const links = linkHeader.split(", ");
+    // console.log(links);
+    
+    // forof loop
     for (const link of links) {
+        // divide link and rel
         const [urlPart, relPart] = link.split("; ");
+        // console.log(urlPart, relPart);
+        // if includes rel=last so it's the last page link return link
         if (relPart.includes('rel="last"')) {
             return urlPart.slice(1, -1);
         }
