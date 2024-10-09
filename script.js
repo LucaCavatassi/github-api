@@ -1,5 +1,7 @@
 // Starting Page 
 let page = 1;
+
+// Fetching function
 async function getData() {
     // Endpoint API
     const url = "https://api.github.com/user/repos";
@@ -32,7 +34,7 @@ async function getData() {
         console.error(error.message);
     }
 }
-
+// ReposRender basic
 function renderRepos(repos) {
     // Select DOM Element
     const repoList = document.getElementById("repo-list");
@@ -50,6 +52,7 @@ function renderRepos(repos) {
     });
 }
 
+// At startup first 10 rendered
 document.addEventListener("DOMContentLoaded", async () => {
     // save the return of getData (json collection) into var repos and wait to fetch data
     const repos = await getData();
@@ -58,3 +61,25 @@ document.addEventListener("DOMContentLoaded", async () => {
         renderRepos(repos);
     }
 });
+
+let nextBtn = document.getElementById('next-page');
+nextBtn.addEventListener('click', async () => {
+    // save the return of getData (json collection) into var repos and wait to fetch data
+    const repos = await getData();
+
+    // If repo in pagina minori di 10
+    if (repos.length < 10) {
+        page = 1
+        // if data it's fetched apply render-repos
+        if (repos) {
+            renderRepos(repos);
+        }
+    } else {
+        // set page up
+        page++;
+        // if data it's fetched apply render-repos
+        if (repos) {
+            renderRepos(repos);
+        }
+    }
+})
