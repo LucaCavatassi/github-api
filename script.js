@@ -1,11 +1,11 @@
+// Starting Page 
+let page = 1;
 async function getData() {
     // Endpoint API
     const url = "https://api.github.com/user/repos";
     // PerPage Items
     const perPage = 10;
-    // Starting Page 
-    let page = 1;
-
+    
 
     try {
         // Assign constant to the fetching of data with headers.
