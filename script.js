@@ -199,7 +199,7 @@ function renderRepos(repos) {
     const div = document.createElement('div');
         div.classList.add('d-flex');
         div.classList.add('flex-wrap');
-        div.classList.add('my-5');
+        div.classList.add('my-3');
         div.classList.add('gap-3');
         div.classList.add('flex-grow-1');
 
@@ -212,7 +212,7 @@ function renderRepos(repos) {
             card.classList.add('d-flex');
             card.classList.add('flex-row');
 
-            card.style.width = 'calc(95% / 2)';
+            card.style.width = 'calc(97.5% / 2)';
             card.style.height = '90px';
 
             // Create Card Img 
@@ -222,9 +222,10 @@ function renderRepos(repos) {
             cardImg.style.width = '30%';
             cardImg.style.height = '100%';
             cardImg.style.objectFit = 'cover';
-            cardImg.style.borderRadius = 0;
+            cardImg.style.borderTopRightRadius = 0;
+            cardImg.style.borderBottomRightRadius = 0;
 
-            cardImg.src = repo.owner.avatar_url;
+            cardImg.src = repo.avatar_url || repo.owner.avatar_url; 
             card.appendChild(cardImg);
 
             // Create Card-body div
@@ -250,9 +251,13 @@ function renderRepos(repos) {
         });
         // If there are repos but total count it's 0 no items found message
     } else if (repos && repos.total_count === 0) {
-            const listItem = document.createElement('li');
-            listItem.innerHTML = 'No repositories found.';
-            repoList.appendChild(listItem);
+            const title = document.createElement('h1');
+            title.classList.add('text-center');
+            title.classList.add('my-4');
+            title.classList.add('text-center');
+            
+            title.innerHTML = 'Sorry, nothing found.';
+            document.getElementById('error-message').appendChild(title);
     }
 
     // Insert the div into the main div
