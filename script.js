@@ -74,15 +74,15 @@ searchButton.addEventListener("click", async () => {
             repos = await getData(); // Use repository search API
             if (repos) {
                 renderRepos(repos);
-                document.getElementById('page-count').textContent = "Page number 1";
-                document.getElementById('repo-count').textContent = "Number of repos: " + repos.total_count;
+                document.getElementById('page-count').textContent = "Page - 1";
+                document.getElementById('repo-count').innerHTML = `Number of users found - <strong><em>${repos.total_count}</em></strong>`;
             }
         } else if (selectedOption === 'user') {
             repos = await getData(`https://api.github.com/search/users?q=${searchQuery}&per_page=10&page=${page}`); // Use user search API
             if (repos) {
                 renderRepos(repos);
-                document.getElementById('page-count').textContent = "Page number 1";
-                document.getElementById('repo-count').textContent = "Number of users: " + repos.total_count;
+                document.getElementById('page-count').textContent = "Page - 1";
+                document.getElementById('repo-count').innerHTML = `Number of users found - <strong><em>${repos.total_count}</em></strong>`;
             }
         }
 
@@ -110,13 +110,13 @@ nextBtn.addEventListener('click', async () => {
         repoList.style.display = 'block';
 
         renderRepos(firstPageRepos);
-        document.getElementById('page-count').textContent = "Page number 1";
+        document.getElementById('page-count').textContent = "Page - 1";
     } else {
         hideLoader();
         repoList.style.display = 'block';
 
         renderRepos(repos);
-        document.getElementById('page-count').textContent = "Page number " + page;
+        document.getElementById('page-count').textContent = "Page - " + page;
     }
 
     
