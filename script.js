@@ -9,7 +9,7 @@ const prevBtn = document.getElementById('prev-page');
 
 // Fetching function for global search
 async function getData(url = null) {
-    // Define the API URL for global search based on the search query
+
     const apiUrl = url || `https://api.github.com/search/repositories?q=${searchQuery}&per_page=10&page=${page}`;
 
     try {
@@ -31,8 +31,9 @@ async function getData(url = null) {
         const linkHeader = response.headers.get('Link');
         if (!lastPageUrl && page === 1 && linkHeader) {
             lastPageUrl = getLastPageUrl(linkHeader);
-            console.log("Last Page URL:", lastPageUrl);
         }
+        console.log(linkHeader);
+        
 
         return json;
     } catch (error) {
@@ -85,8 +86,9 @@ searchButton.addEventListener("click", async () => {
 nextBtn.addEventListener('click', async () => {
     page++;
     const repos = await getData();
+    const lastPage = new URL(lastPageUrl).searchParams.get('page')
 
-    if (repos && repos.items.length < 10) {
+    if (page > lastPage) {
         page = 1; // Reset to first page if last page reached
         const firstPageRepos = await getData();
         renderRepos(firstPageRepos);
@@ -103,5 +105,13 @@ prevBtn.addEventListener('click', async () => {
         const repos = await getData();
         renderRepos(repos);
         document.getElementById('page-count').textContent = "Page number " + page;
+    } else if (page === 1) {
+        const repos = await getData(lastPageUrl);
+
+        const newPage = new URL(lastPageUrl).searchParams.get('page')
+        page=newPage
+        
+        renderRepos(repos);
+        document.getElementById('page-count').textContent = "Last page ";
     }
 });
