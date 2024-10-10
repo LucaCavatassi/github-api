@@ -32,9 +32,6 @@ async function getData(url = null) {
         if (!lastPageUrl && page === 1 && linkHeader) {
             lastPageUrl = getLastPageUrl(linkHeader);
         }
-        console.log(linkHeader);
-        
-
         return json;
     } catch (error) {
         console.error(error.message);
@@ -45,14 +42,18 @@ function renderRepos(repos) {
     const repoList = document.getElementById("repo-list");
     repoList.innerHTML = ''; // Clear the list
 
-    if (repos && repos.items) {
+    if (repos && repos.total_count > 0) {
         repos.items.forEach(repo => {
             const listItem = document.createElement('li');
             listItem.innerHTML = repo.name;
             repoList.appendChild(listItem);
         });
-    } else {
-        repoList.innerHTML = '<li>No repositories found.</li>';
+    } else if (repos.total_count === 0) {
+            const listItem = document.createElement('li');
+            listItem.innerHTML = 'No repositories found.';
+            repoList.appendChild(listItem);
+            console.log(repoList);
+            
     }
 }
 
@@ -69,10 +70,12 @@ function getLastPageUrl(linkHeader) {
 
 searchButton.addEventListener("click", async () => {
     searchQuery = searchBar.value.trim();
-    page = 1; // Reset page to 1 for new searches
+    page = 1; // Reset page to 1
 
     if (searchQuery.length > 3) {
         const repos = await getData();
+        console.log(repos);
+        
         if (repos) {
             renderRepos(repos);
             document.getElementById('page-count').textContent = "Page number 1";
