@@ -36,7 +36,6 @@ async function getData(url = null) {
         const linkHeader = response.headers.get('Link');
         if (!lastPageUrl && page === 1 && linkHeader) {
             lastPageUrl = getLastPageUrl(linkHeader);
-            console.log("Last Page URL:", lastPageUrl);
         }
         return json;
     } catch (error) {
