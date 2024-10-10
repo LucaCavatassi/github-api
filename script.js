@@ -95,7 +95,7 @@ searchButton.addEventListener("click", async () => {
 // Next logic
 nextBtn.addEventListener('click', async () => {
 
-    repoList.style.display = 'none';
+    repoList.innerHTML = '';
     showLoader();
 
     page++;
@@ -105,35 +105,25 @@ nextBtn.addEventListener('click', async () => {
     if (page > lastPage) {
         page = 1; // Reset to first page if last page reached
         const firstPageRepos = await getData();
-
-        hideLoader();
-        repoList.style.display = 'block';
-
         renderRepos(firstPageRepos);
         document.getElementById('page-count').textContent = "Page - 1";
     } else {
-        hideLoader();
-        repoList.style.display = 'block';
-
         renderRepos(repos);
         document.getElementById('page-count').textContent = "Page - " + page;
     }
 
+    hideLoader();
     
 });
 
 // Prev logic
 prevBtn.addEventListener('click', async () => {
-    repoList.style.display = 'none';
+    repoList.innerHTML = '';
     showLoader();
 
     if (page > 1) {
         page--;
         const repos = await getData();
-
-        hideLoader();
-        repoList.style.display = 'block';
-
         renderRepos(repos);
         document.getElementById('page-count').textContent = "Page number " + page;
     } else if (page === 1) {
@@ -142,11 +132,11 @@ prevBtn.addEventListener('click', async () => {
         const newPage = new URL(lastPageUrl).searchParams.get('page')
         page=newPage
         
-        hideLoader();
-        repoList.style.display = 'block';
         renderRepos(repos);
         document.getElementById('page-count').textContent = "Last page ";
     }
+
+    hideLoader();
 });
 
 // Loader
@@ -157,30 +147,27 @@ function showLoader() {
 function hideLoader() {
     loader.style.display = 'none';
 }
-
-
 // Loader
-function showLoader() {
-    loader.style.display = 'block';
-}
-
-function hideLoader() {
-    loader.style.display = 'none';
-}
-
 
 // Rendering function
 function renderRepos(repos) {
     
+    repoList.innerHTML = '';
 
+    // Create Div
+    const div = document.createElement('div');
+        div.classList.add('d-flex');
+        div.classList.add('flex-wrap');
+        div.classList.add('my-5');
+        div.classList.add('gap-3');
 
     if (repos && repos.total_count > 0) {
         repos.items.forEach(repo => {
             // Create Card
             const card = document.createElement('div')
-            card.style.width = 'calc(71% / 3)'
+            card.style.width = 'calc(95% / 2)'
+            card.style.height = '90px'
             card.classList.add('card')
-            card.id = 'repo-list';
             // Create Card-body div
             const cardBody = document.createElement('div')
             cardBody.classList.add('card-body')
@@ -192,9 +179,7 @@ function renderRepos(repos) {
             cardTitle.textContent = repo.login || repo.name;
             cardBody.appendChild(cardTitle);
 
-            
-            const renderDiv = document.getElementById('render')
-            renderDiv.appendChild(card);
+            div.appendChild(card);
         });
     } else if (repos && repos.total_count === 0) {
             const listItem = document.createElement('li');
@@ -203,6 +188,8 @@ function renderRepos(repos) {
             console.log(repoList);
             
     }
+
+    repoList.appendChild(div);
 }
 
 
