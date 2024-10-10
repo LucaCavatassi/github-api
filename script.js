@@ -197,11 +197,11 @@ function renderRepos(repos) {
 
     // Create Div with bootstrap classes
     const div = document.createElement('div');
-        div.classList.add('d-flex');
+        div.classList.add('row');
         div.classList.add('flex-wrap');
-        div.classList.add('my-3');
-        div.classList.add('gap-3');
-        div.classList.add('flex-grow-1');
+        div.classList.add('my-2');
+        div.classList.add('g-3');
+        div.classList.add('flex-grow-1')
 
     // If repos exist and more than 0 create the card and insert the data.
     if (repos && repos.total_count > 0) {
@@ -211,8 +211,10 @@ function renderRepos(repos) {
             card.classList.add('card');
             card.classList.add('d-flex');
             card.classList.add('flex-row');
+            card.classList.add('col-12');
+            card.classList.add('col-md-6');
+            card.classList.add('px-0');
 
-            card.style.width = 'calc(97.5% / 2)';
             card.style.height = '90px';
 
             // Create Card Img 
@@ -229,8 +231,12 @@ function renderRepos(repos) {
             card.appendChild(cardImg);
 
             // Create Card-body div
-            const cardBody = document.createElement('div')
-            cardBody.classList.add('card-body')
+            const cardBody = document.createElement('div');
+            cardBody.classList.add('card-body');
+            cardBody.classList.add('p-0');
+            cardBody.classList.add('ps-3');
+            cardBody.classList.add('pt-2');
+
             card.appendChild(cardBody);
 
 
@@ -239,6 +245,7 @@ function renderRepos(repos) {
             cardTitle.classList.add('card-title');
             cardTitle.classList.add('fw-bold');
             cardTitle.classList.add('fs-5');
+            cardTitle.classList.add('mb-2');
 
 
             cardTitle.href = repo.html_url;
@@ -248,6 +255,23 @@ function renderRepos(repos) {
             cardBody.appendChild(cardTitle);
 
             div.appendChild(card);
+
+            // Create Card Info 
+            const cardInfo = document.createElement('div');
+            // Stars
+            const cardStars = document.createElement('span');
+            cardStars.classList.add('pt-2');
+            cardStars.classList.add('pe-3');
+
+            cardStars.innerHTML = `<i class="fa-solid fa-star"><span class='px-2'>${repo.stargazers_count}</span></i>`;
+            cardInfo.appendChild(cardStars);
+            // Forks
+            const cardForks = document.createElement('span');
+            cardForks.innerHTML = `<i class="fa-solid fa-code-fork"><span class='px-2'>${repo.forks}</span></i>`;
+            cardInfo.appendChild(cardForks);
+            
+            cardBody.appendChild(cardInfo);
+
         });
         // If there are repos but total count it's 0 no items found message
     } else if (repos && repos.total_count === 0) {

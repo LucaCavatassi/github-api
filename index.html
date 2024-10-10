@@ -22,19 +22,23 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="background">
-    <div class="container mt-4">
+    <div class="container py-3">
         <!-- TITLE -->
         <h1 id="title" class="text-center">SearchHub</h1>
         <!-- TITLE -->
 
         <!-- SEARCHBAR + SEARCH SELECTION -->
-        <div style="height: 50px;" class="d-flex gap-3">
-            <input class="form-control w-75" type="text" id="search-bar" placeholder="Type here..." />
-            <select class="form-select w-25 fs-5" id="searchQuery">
-                <option value="repo">Repositories</option>
-                <option value="user">Users</option>
-            </select>
-            <button id="search-button" class="btn btn-primary">Search</button>
+        <div class="row g-3 container justify-content-center">
+            <div class="col-12 col-md-7 pe-0">
+                <input style="height: 50px;" class="form-control fs-5" type="text" id="search-bar" placeholder="Type here..." />
+            </div>
+            <div class="col-6 col-md-3">
+                <select style="height: 50px;" class="form-select fs-5" id="searchQuery">
+                    <option value="repo">Repositories</option>
+                    <option value="user">Users</option>
+                </select>
+            </div>
+            <button id="search-button" class="btn btn-primary col">Search</button>
         </div>
         <!-- SEARCHBAR + SEARCH SELECTION -->
 
@@ -44,7 +48,7 @@
 
         <div id="error-message"></div>
         <!-- RENDER DATA -->
-        <div id="repo-list"  class="d-flex justify-content-center">
+        <div id="repo-list"  class="d-flex justify-content-center p-2">
             
         </div>
         <!-- RENDER DATA -->
