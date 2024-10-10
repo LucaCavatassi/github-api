@@ -97,7 +97,7 @@ searchButton.addEventListener("click", async () => {
                 showButtons(repos)
                 renderRepos(repos);
                 document.getElementById('page-count').textContent = "Page - 1";
-                document.getElementById('repo-count').innerHTML = `Number of users found - <strong><em>${repos.total_count}</em></strong>`;
+                document.getElementById('repo-count').innerHTML = `Number of repositories found - <strong><em>${repos.total_count}</em></strong>`;
             }
 
             // If the selector value it's user make the search using the url into this function
@@ -207,18 +207,41 @@ function renderRepos(repos) {
     if (repos && repos.total_count > 0) {
         repos.items.forEach(repo => {
             // Create Card
-            const card = document.createElement('div')
-            card.style.width = 'calc(95% / 2)'
-            card.style.height = '90px'
-            card.classList.add('card')
+            const card = document.createElement('div');
+            card.classList.add('card');
+            card.classList.add('d-flex');
+            card.classList.add('flex-row');
+
+            card.style.width = 'calc(95% / 2)';
+            card.style.height = '90px';
+
+            // Create Card Img 
+            const cardImg = document.createElement('img');
+            cardImg.classList.add('card-img-top');
+
+            cardImg.style.width = '30%';
+            cardImg.style.height = '100%';
+            cardImg.style.objectFit = 'cover';
+            cardImg.style.borderRadius = 0;
+
+            cardImg.src = repo.owner.avatar_url;
+            card.appendChild(cardImg);
+
             // Create Card-body div
             const cardBody = document.createElement('div')
             cardBody.classList.add('card-body')
             card.appendChild(cardBody);
 
+
             // Create Card title
-            const cardTitle = document.createElement('h5');
+            const cardTitle = document.createElement('a');
             cardTitle.classList.add('card-title');
+            cardTitle.classList.add('fw-bold');
+            cardTitle.classList.add('fs-5');
+
+
+            cardTitle.href = repo.html_url;
+            cardTitle.setAttribute('target', '_blank');
             // Insert name or login(username) based on repo content
             cardTitle.textContent = repo.login || repo.name;
             cardBody.appendChild(cardTitle);
