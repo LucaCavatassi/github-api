@@ -44,11 +44,13 @@ function renderRepos(repos) {
 
     if (repos && repos.total_count > 0) {
         repos.items.forEach(repo => {
+            console.log(repo);
+            
             const listItem = document.createElement('li');
-            listItem.innerHTML = repo.name;
+            listItem.innerHTML = repo.login || repo.name;
             repoList.appendChild(listItem);
         });
-    } else if (repos.total_count === 0) {
+    } else if (repos && repos.total_count === 0) {
             const listItem = document.createElement('li');
             listItem.innerHTML = 'No repositories found.';
             repoList.appendChild(listItem);
@@ -72,14 +74,26 @@ searchButton.addEventListener("click", async () => {
     searchQuery = searchBar.value.trim();
     page = 1; // Reset page to 1
 
+    let selection = document.getElementById('searchQuery');
+    const selectedOption = selection.value;
+
     if (searchQuery.length > 3) {
-        const repos = await getData();
-        console.log(repos);
-        
-        if (repos) {
-            renderRepos(repos);
-            document.getElementById('page-count').textContent = "Page number 1";
-            document.getElementById('repo-count').innerHTML = "Number of repos: " + repos.total_count;
+        let repos;
+
+        if (selectedOption === 'repo') {
+            repos = await getData(); // Use repository search API
+            if (repos) {
+                renderRepos(repos);
+                document.getElementById('page-count').textContent = "Page number 1";
+                document.getElementById('repo-count').textContent = "Number of repos: " + repos.total_count;
+            }
+        } else if (selectedOption === 'user') {
+            repos = await getData(`https://api.github.com/search/users?q=${searchQuery}&per_page=10&page=${page}`); // Use user search API
+            if (repos) {
+                renderRepos(repos);
+                document.getElementById('page-count').textContent = "Page number 1";
+                document.getElementById('repo-count').textContent = "Number of users: " + repos.total_count;
+            }
         }
     } else {
         alert('Minimum 3 characters required for search.');
@@ -118,3 +132,5 @@ prevBtn.addEventListener('click', async () => {
         document.getElementById('page-count').textContent = "Last page ";
     }
 });
+
+
