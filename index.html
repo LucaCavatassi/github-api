@@ -22,19 +22,40 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>GitHub Repos</h1>
-    <input type="text" id="search-bar" placeholder="Search repositories by name..." />
-    <select id="searchQuery">
-        <option value="repo">Repositories</option>
-        <option value="user">Users</option>
-    </select>
-    <button id="search-button">Search</button>
-    <div id="loader" class="loader" style="display: none;">Sono illoader</div>
-    <ul id="repo-list"></ul>
-    <button id="prev-page">Previous Page</button>
-    <p id="page-count"> </p>
-    <p id="repo-count"></p>
-    <button id="next-page">Next Page</button>
-    <script src="./script.js"></script>
+    <div class="container mt-4">
+        <!-- TITLE -->
+        <h1 class="text-center">SearchHub</h1>
+        <!-- TITLE -->
+
+        <!-- SEARCHBAR + SEARCH SELECTION -->
+        <div class="d-flex gap-3">
+            <input class="form-control w-75" type="text" id="search-bar" placeholder="Type here..." />
+            <select class="form-select w-25" id="searchQuery">
+                <option value="repo">Repositories</option>
+                <option value="user">Users</option>
+            </select>
+            <button id="search-button" class="btn btn-primary">Search</button>
+        </div>
+        <!-- SEARCHBAR + SEARCH SELECTION -->
+
+        <!-- LOADER -->
+        <div id="loader" class="loader" style="display: none;">Sono illoader</div>
+        <!-- LOADER -->
+
+        <!-- RENDER DATA -->
+        <ul id="repo-list"></ul>
+        <!-- RENDER DATA -->
+
+        <!-- PREV - NEXT BUTTONS -->
+        <button id="prev-page">Previous Page</button>
+        <p id="page-count"> </p>
+        <p id="repo-count"></p>
+        <button id="next-page">Next Page</button>
+        <!-- PREV - NEXT BUTTONS -->
+
+
+        <!-- SCRIPT -->
+        <script src="./script.js"></script>
+    </div>
 </body>
 </html>
