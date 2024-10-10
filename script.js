@@ -1,7 +1,9 @@
+// Params for search
 let page = 1;
 let lastPageUrl = null;
 let searchQuery = '';
 
+// DOM Elements
 const searchBar = document.getElementById("search-bar");
 const searchButton = document.getElementById("search-button");
 const nextBtn = document.getElementById('next-page');
@@ -38,27 +40,7 @@ async function getData(url = null) {
     }
 }
 
-function renderRepos(repos) {
-    const repoList = document.getElementById("repo-list");
-    repoList.innerHTML = ''; // Clear the list
-
-    if (repos && repos.total_count > 0) {
-        repos.items.forEach(repo => {
-            console.log(repo);
-            
-            const listItem = document.createElement('li');
-            listItem.innerHTML = repo.login || repo.name;
-            repoList.appendChild(listItem);
-        });
-    } else if (repos && repos.total_count === 0) {
-            const listItem = document.createElement('li');
-            listItem.innerHTML = 'No repositories found.';
-            repoList.appendChild(listItem);
-            console.log(repoList);
-            
-    }
-}
-
+// Last url retriever
 function getLastPageUrl(linkHeader) {
     const links = linkHeader.split(", ");
     for (const link of links) {
@@ -70,6 +52,7 @@ function getLastPageUrl(linkHeader) {
     return null; // No last page found
 }
 
+// Search logic
 searchButton.addEventListener("click", async () => {
     searchQuery = searchBar.value.trim();
     page = 1; // Reset page to 1
@@ -100,6 +83,7 @@ searchButton.addEventListener("click", async () => {
     }
 });
 
+// Next logic
 nextBtn.addEventListener('click', async () => {
     page++;
     const repos = await getData();
@@ -116,6 +100,7 @@ nextBtn.addEventListener('click', async () => {
     }
 });
 
+// Prev logic
 prevBtn.addEventListener('click', async () => {
     if (page > 1) {
         page--;
@@ -132,5 +117,27 @@ prevBtn.addEventListener('click', async () => {
         document.getElementById('page-count').textContent = "Last page ";
     }
 });
+
+// Rendering function
+function renderRepos(repos) {
+    const repoList = document.getElementById("repo-list");
+    repoList.innerHTML = ''; // Clear the list
+
+    if (repos && repos.total_count > 0) {
+        repos.items.forEach(repo => {
+            const listItem = document.createElement('li');
+            listItem.innerHTML = repo.login || repo.name;
+            repoList.appendChild(listItem);
+        });
+    } else if (repos && repos.total_count === 0) {
+            const listItem = document.createElement('li');
+            listItem.innerHTML = 'No repositories found.';
+            repoList.appendChild(listItem);
+            console.log(repoList);
+            
+    }
+}
+
+
 
 
