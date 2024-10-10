@@ -15,6 +15,7 @@ const repoList = document.getElementById("repo-list");
 // Fetching function for global search
 async function getData(url = null) {
 
+    
     const apiUrl = url || `https://api.github.com/search/repositories?q=${searchQuery}&per_page=10&page=${page}`;
 
     try {
@@ -65,28 +66,34 @@ searchButton.addEventListener("click", async () => {
     let selection = document.getElementById('searchQuery');
     const selectedOption = selection.value;
 
-    if (searchQuery.length > 3) {
+    if (searchQuery.length > 2) {
+        repoList.innerHTML = '';
         showLoader();
 
         let repos;
 
         if (selectedOption === 'repo') {
-            repos = await getData(); // Use repository search API
+            repos = await getData();
             if (repos) {
+                showButtons(repos)
                 renderRepos(repos);
                 document.getElementById('page-count').textContent = "Page - 1";
                 document.getElementById('repo-count').innerHTML = `Number of users found - <strong><em>${repos.total_count}</em></strong>`;
             }
+
         } else if (selectedOption === 'user') {
-            repos = await getData(`https://api.github.com/search/users?q=${searchQuery}&per_page=10&page=${page}`); // Use user search API
+            repos = await getData(`https://api.github.com/search/users?q=${searchQuery}&per_page=10&page=${page}`);
             if (repos) {
+                showButtons(repos)
                 renderRepos(repos);
                 document.getElementById('page-count').textContent = "Page - 1";
                 document.getElementById('repo-count').innerHTML = `Number of users found - <strong><em>${repos.total_count}</em></strong>`;
             }
+
         }
 
         hideLoader();
+        
     } else {
         alert('Minimum 3 characters required for search.');
     }
@@ -94,7 +101,6 @@ searchButton.addEventListener("click", async () => {
 
 // Next logic
 nextBtn.addEventListener('click', async () => {
-
     repoList.innerHTML = '';
     showLoader();
 
@@ -160,6 +166,8 @@ function renderRepos(repos) {
         div.classList.add('flex-wrap');
         div.classList.add('my-5');
         div.classList.add('gap-3');
+        div.classList.add('flex-grow-1');
+
 
     if (repos && repos.total_count > 0) {
         repos.items.forEach(repo => {
@@ -192,6 +200,20 @@ function renderRepos(repos) {
     repoList.appendChild(div);
 }
 
+// Buttons rendering
+function showButtons (repos) {
+    const totalCount = repos.total_count;
+    const perPage = 10; // Assuming you're fetching 10 items per page
 
+    if (totalCount > perPage) {
+        // Show buttons if there are multiple pages
+        document.getElementById('buttons').classList.remove('d-none')
+        document.getElementById('buttons').classList.add('d-block')
+    } else {
+        // Hide buttons if there's only one page
+        document.getElementById('buttons').classList.add('d-none')
+        document.getElementById('buttons').classList.remove('d-block')
+    }
 
+}
 
