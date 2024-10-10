@@ -30,7 +30,7 @@ async function getData(url = null) {
         }
 
         const json = await response.json();
-        console.log(json);
+        // console.log(json);
 
         // Access and store the Link header for pagination
         const linkHeader = response.headers.get('Link');
