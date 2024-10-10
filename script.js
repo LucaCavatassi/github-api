@@ -162,13 +162,30 @@ function hideLoader() {
 
 // Rendering function
 function renderRepos(repos) {
-    repoList.innerHTML = ''; // Clear the list
+    
+
 
     if (repos && repos.total_count > 0) {
         repos.items.forEach(repo => {
-            const listItem = document.createElement('li');
-            listItem.innerHTML = repo.login || repo.name;
-            repoList.appendChild(listItem);
+            // Create Card
+            const card = document.createElement('div')
+            card.style.width = 'calc(71% / 3)'
+            card.classList.add('card')
+            card.id = 'repo-list';
+            // Create Card-body div
+            const cardBody = document.createElement('div')
+            cardBody.classList.add('card-body')
+            card.appendChild(cardBody);
+
+            // Create Card title
+            const cardTitle = document.createElement('h5');
+            cardTitle.classList.add('card-title');
+            cardTitle.textContent = repo.login || repo.name;
+            cardBody.appendChild(cardTitle);
+
+            
+            const renderDiv = document.getElementById('render')
+            renderDiv.appendChild(card);
         });
     } else if (repos && repos.total_count === 0) {
             const listItem = document.createElement('li');
