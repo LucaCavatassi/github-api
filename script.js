@@ -8,11 +8,15 @@ const searchBar = document.getElementById("search-bar");
 const searchButton = document.getElementById("search-button");
 const nextBtn = document.getElementById('next-page');
 const prevBtn = document.getElementById('prev-page');
+const loader = document.getElementById('loader');
+const repoList = document.getElementById("repo-list");
+
 
 // Fetching function for global search
 async function getData(url = null) {
 
     const apiUrl = url || `https://api.github.com/search/repositories?q=${searchQuery}&per_page=10&page=${page}`;
+    showLoader();
 
     try {
         const response = await fetch(apiUrl, {
@@ -37,7 +41,11 @@ async function getData(url = null) {
         return json;
     } catch (error) {
         console.error(error.message);
+    } finally {
+        hideLoader();
     }
+
+
 }
 
 // Last url retriever
@@ -61,6 +69,8 @@ searchButton.addEventListener("click", async () => {
     const selectedOption = selection.value;
 
     if (searchQuery.length > 3) {
+        showLoader();
+
         let repos;
 
         if (selectedOption === 'repo') {
@@ -78,6 +88,8 @@ searchButton.addEventListener("click", async () => {
                 document.getElementById('repo-count').textContent = "Number of users: " + repos.total_count;
             }
         }
+
+        hideLoader();
     } else {
         alert('Minimum 3 characters required for search.');
     }
@@ -85,6 +97,10 @@ searchButton.addEventListener("click", async () => {
 
 // Next logic
 nextBtn.addEventListener('click', async () => {
+
+    repoList.style.display = 'none';
+    showLoader();
+
     page++;
     const repos = await getData();
     const lastPage = new URL(lastPageUrl).searchParams.get('page')
@@ -92,19 +108,35 @@ nextBtn.addEventListener('click', async () => {
     if (page > lastPage) {
         page = 1; // Reset to first page if last page reached
         const firstPageRepos = await getData();
+
+        hideLoader();
+        repoList.style.display = 'block';
+
         renderRepos(firstPageRepos);
         document.getElementById('page-count').textContent = "Page number 1";
     } else {
+        hideLoader();
+        repoList.style.display = 'block';
+
         renderRepos(repos);
         document.getElementById('page-count').textContent = "Page number " + page;
     }
+
+    
 });
 
 // Prev logic
 prevBtn.addEventListener('click', async () => {
+    repoList.style.display = 'none';
+    showLoader();
+
     if (page > 1) {
         page--;
         const repos = await getData();
+
+        hideLoader();
+        repoList.style.display = 'block';
+
         renderRepos(repos);
         document.getElementById('page-count').textContent = "Page number " + page;
     } else if (page === 1) {
@@ -113,14 +145,26 @@ prevBtn.addEventListener('click', async () => {
         const newPage = new URL(lastPageUrl).searchParams.get('page')
         page=newPage
         
+        hideLoader();
+        repoList.style.display = 'block';
+        
         renderRepos(repos);
         document.getElementById('page-count').textContent = "Last page ";
     }
 });
 
+// Loader
+function showLoader() {
+    loader.style.display = 'block';
+}
+
+function hideLoader() {
+    loader.style.display = 'none';
+}
+
+
 // Rendering function
 function renderRepos(repos) {
-    const repoList = document.getElementById("repo-list");
     repoList.innerHTML = ''; // Clear the list
 
     if (repos && repos.total_count > 0) {
