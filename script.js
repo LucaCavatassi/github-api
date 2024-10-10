@@ -16,7 +16,6 @@ const repoList = document.getElementById("repo-list");
 async function getData(url = null) {
 
     const apiUrl = url || `https://api.github.com/search/repositories?q=${searchQuery}&per_page=10&page=${page}`;
-    showLoader();
 
     try {
         const response = await fetch(apiUrl, {
@@ -41,8 +40,6 @@ async function getData(url = null) {
         return json;
     } catch (error) {
         console.error(error.message);
-    } finally {
-        hideLoader();
     }
 
 
@@ -147,7 +144,7 @@ prevBtn.addEventListener('click', async () => {
         
         hideLoader();
         repoList.style.display = 'block';
-        
+
         renderRepos(repos);
         document.getElementById('page-count').textContent = "Last page ";
     }
