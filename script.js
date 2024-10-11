@@ -285,6 +285,7 @@ function renderRepos(repos) {
                 const resp = await fetch(followers_url);
                 // Convert to Json
                 const json = await resp.json();
+                console.log(json);
                 // Length = number
                 return json.length;
             }
