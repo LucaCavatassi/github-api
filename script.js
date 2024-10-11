@@ -122,7 +122,13 @@ searchButton.addEventListener("click", async () => {
         
         // Message for less then 3 char
     } else {
-        alert('Minimum 3 characters required for search.');
+            const title = document.createElement('h1');
+            title.classList.add('text-center');
+            title.classList.add('my-4');
+            title.classList.add('text-center');
+            
+            title.innerHTML = 'Please type at least 3 carachters in the searchbar.';
+            document.getElementById('error-message').appendChild(title);
     }
 });
 
@@ -211,80 +217,132 @@ function renderRepos(repos) {
     // If repos exist and more than 0 create the card and insert the data.
     if (repos && repos.total_count > 0) {
         repos.items.forEach(repo => {
-            // Create Card
+            // CREATE CARD
             const card = document.createElement('div');
+            // Style
             card.classList.add('card');
             card.classList.add('d-flex');
             card.classList.add('flex-row');
             card.classList.add('col-12');
             card.classList.add('col-md-6');
             card.classList.add('px-0');
-
             card.style.height = '90px';
 
-            // Create Card Img 
+            // CREATE CARD IMG
             const cardImg = document.createElement('img');
+            // Style
             cardImg.classList.add('card-img-top');
-
             cardImg.style.width = '30%';
             cardImg.style.height = '100%';
             cardImg.style.objectFit = 'cover';
             cardImg.style.borderTopRightRadius = 0;
             cardImg.style.borderBottomRightRadius = 0;
 
+            // Display image based on repo structure
             cardImg.src = repo.avatar_url || repo.owner.avatar_url; 
             card.appendChild(cardImg);
 
-            // Create Card-body div
+            // CREATE CARD BODY
             const cardBody = document.createElement('div');
+            // Style
             cardBody.classList.add('card-body');
             cardBody.classList.add('p-0');
             cardBody.classList.add('ps-3');
             cardBody.classList.add('pt-2');
-
+            
             card.appendChild(cardBody);
 
-
-            // Create Card title
+            // CREATE CARD TITLE
             const cardTitle = document.createElement('a');
+            // Style
             cardTitle.classList.add('card-title');
             cardTitle.classList.add('fw-bold');
             cardTitle.classList.add('fs-5');
             cardTitle.classList.add('mb-2');
 
-
+            // Link to repo or user
             cardTitle.href = repo.html_url;
+            // Open in another page
             cardTitle.setAttribute('target', '_blank');
+
             // Insert name or login(username) based on repo content
             cardTitle.textContent = repo.login || repo.name;
-            cardBody.appendChild(cardTitle);
-
+            cardBody.appendChild(cardTitle);   
             div.appendChild(card);
 
-            // Create Card Info 
+            // CREATE CARD INFO 
             const cardInfo = document.createElement('div');
-            // Stars
+            // Stars or Follower Style
             const cardStars = document.createElement('span');
             cardStars.classList.add('pt-2');
             cardStars.classList.add('pe-3');
 
-            cardStars.innerHTML = `<i class="fa-solid fa-star"><span class='px-2'>${repo.stargazers_count}</span></i>`;
+            // Follower API Url
+            const followers_url = repo.followers_url;
+            // Function to getFollowers
+            async function getFollowers() {
+                // Fetch
+                const resp = await fetch(followers_url);
+                // Convert to Json
+                const json = await resp.json();
+                // Length = number
+                return json.length;
+            }
+            // Function to render
+            async function updateCardStars(repo) {
+                // If there are stars so we are into repos search print repo stars
+                if (repo.stargazers_count !== undefined) {
+                    cardStars.innerHTML = `<i class="fa-solid fa-star"><span class='px-2'>${repo.stargazers_count}</span></i>`;
+                // Else we are in users so get the followers from function and print it 
+                } else {
+                    const followers = await getFollowers();
+                    cardStars.innerHTML = `<i class="fa-solid fa-user-plus"><span class='px-2'>${followers}</span></i>`;
+                }
+            }
+            // Call the function and pass the repo
+            updateCardStars(repo);
+            // Append to div
             cardInfo.appendChild(cardStars);
-            // Forks
+
+
+            // Forks or repos
             const cardForks = document.createElement('span');
-            cardForks.innerHTML = `<i class="fa-solid fa-code-fork"><span class='px-2'>${repo.forks}</span></i>`;
+            const repos_url = repo.repos_url;
+
+            async function getRepos() {
+                // Fetch
+                const resp = await fetch(repos_url);
+                // Convert to Json
+                const json = await resp.json();
+                // Length = number
+                return json.length;
+            }
+            // Same logic as for stars
+            async function updateForks(repo) {
+                if (repo.forks !== undefined) {
+                    cardForks.innerHTML = `<i class="fa-solid fa-code-fork"><span class='px-2'>${repo.forks}</span></i>`;
+                } else {
+                    const repos = await getRepos();
+                    cardForks.innerHTML = `<i class="fa-solid fa-folder-open"><span class='px-2'>${repos}</span></i>`
+                }
+            }
+            updateForks(repo)
+            // Append to cardInfo
             cardInfo.appendChild(cardForks);
-            
+            // Append cardInfo to whole body
             cardBody.appendChild(cardInfo);
 
         });
         // If there are repos but total count it's 0 no items found message
     } else if (repos && repos.total_count === 0) {
+            // Create title
             const title = document.createElement('h1');
+            // Style
             title.classList.add('text-center');
             title.classList.add('my-4');
             title.classList.add('text-center');
-            
+            // Style
+            // Text message
             title.innerHTML = 'Sorry, nothing found.';
             document.getElementById('error-message').appendChild(title);
     }
