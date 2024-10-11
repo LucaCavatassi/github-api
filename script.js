@@ -69,6 +69,12 @@ function getLastPageUrl(linkHeader) {
 
 // Search logic
 searchButton.addEventListener("click", async () => {
+    // Clear the inner of the div where things are rendered
+    repoList.innerHTML = '';
+    // Hide or clear the error message
+    const errorMessage = document.getElementById('error-message');
+    errorMessage.innerHTML = ''; // Clear any previous error message
+
     // Trim the input of the user
     searchQuery = searchBar.value.trim();
     // Reset the page to 1 cause each click it's a new page so needed page 1 of the result
@@ -81,8 +87,7 @@ searchButton.addEventListener("click", async () => {
 
     // If the searchQuery it's longer then 2 carachters go and make the searc
     if (searchQuery.length > 2) {
-        // Clear the inner of the div where things are rendered
-        repoList.innerHTML = '';
+        
         // Show the loader
         showLoader();
         // Create repos const
