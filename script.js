@@ -4,6 +4,7 @@ const perPage = 10;
 let lastPageUrl = null;
 let searchQuery = '';
 let selectedOption = 'repo';
+let searchTimer;
 
 // DOM Elements
 const searchBar = document.getElementById("search-bar");
@@ -45,8 +46,26 @@ async function getData(url = null, searchType = 'repo') {
     }
 }
 
-// Search logic
-searchButton.addEventListener("click", async () => {
+// Event listener for the search input field
+searchBar.addEventListener('keyup', () => {
+    // Clear any existing timer
+    clearTimeout(searchTimer);
+
+    // Set a new timer for 3 seconds
+    searchTimer = setTimeout(() => {
+        executeSearch();
+    }, 700);
+});
+
+// Search button click listener
+searchButton.addEventListener("click", () => {
+    // Clear any existing timer to prevent double search
+    clearTimeout(searchTimer);
+    executeSearch();
+});
+
+
+async function executeSearch() {
     repoList.innerHTML = '';
     const errorMessage = document.getElementById('error-message');
     errorMessage.innerHTML = '';
@@ -57,6 +76,7 @@ searchButton.addEventListener("click", async () => {
     let selection = document.getElementById('searchQuery');
     const selectedOption = selection.value; // Determine search type here
 
+    
     if (searchQuery.length > 2) {
         showLoader();
         let repos;
@@ -74,7 +94,7 @@ searchButton.addEventListener("click", async () => {
     } else {
         errorMessage.innerHTML = '<h1 class="text-center my-4">Please type at least 3 characters in the searchbar.</h1>';
     }
-});
+};
 
 // Next button logic
 nextBtn.addEventListener('click', async () => {
